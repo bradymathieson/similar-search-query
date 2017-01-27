@@ -1,10 +1,17 @@
 class SuggestionMachine:
 	map = set()
 	map_unpacked = dict()
-	words_in_dict = ["dania", "brady"]
+	words_in_dict = set()
 
 	def __init__(self):
-		self.initialize_map();
+		self.load_dictionary()
+		self.initialize_map()
+
+	def load_dictionary(self):
+		f = open('google-10000-english-no-swears.txt', 'r')
+		content = f.readlines()
+		for line in content:
+			self.words_in_dict.add(line.strip().lower())
 
 	def initialize_map(self):
 		for word in self.words_in_dict:
@@ -20,12 +27,13 @@ class SuggestionMachine:
 		return False
 
 	def search_for_value(self, query):
-		if query in self.map:
+		query = query.lower()
+		if self.check_existence(query):
 			print "Found query " + query
 		else:
-			print "Did you mean " + self.calculate_best_result(query) + "?"
+			print "Did you mean " + self.calculate_sim_char_count(query) + "?"
 
-	def calculate_best_result(self, query):
+	def calculate_sim_char_count(self, query):
 		query_map = set()
 		for character in query:
 			query_map.add(character)
